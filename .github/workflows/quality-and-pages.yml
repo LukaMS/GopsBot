@@ -11,7 +11,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: pages-${{ github.ref }}
+  # Keep deployments serialized per branch. The version suffix can be bumped
+  # if GitHub ever leaves an orphaned concurrency record behind.
+  group: pages-v2-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
