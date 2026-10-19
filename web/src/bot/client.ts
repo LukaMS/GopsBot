@@ -32,20 +32,22 @@ export class BotClient {
     }
   }
 
-  private request(message: WorkerRequestPayload): Promise<WorkerResponse> {
+  private request(message: WorkerRequestPayload, timeoutMs = 15000): Promise<WorkerResponse> {
     const requestId = this.nextId++
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         this.pending.delete(requestId)
         reject(new Error('The bot took too long to respond.'))
-      }, 15000)
+      }, timeoutMs)
       this.pending.set(requestId, { resolve, reject, timer })
       this.worker.postMessage({ ...message, requestId } satisfies WorkerRequest)
     })
   }
 
   async initialize(modelUrl: string, sha256: string): Promise<void> {
-    const response = await this.request({ type: 'init', modelUrl, sha256 })
+    // A cold CI runner or older phone can take longer while compiling the
+    // 14 MB WASM runtime. In-game choices retain the tighter default timeout.
+    const response = await this.request({ type: 'init', modelUrl, sha256 }, 45000)
     if (response.type !== 'ready') throw new Error('The bot did not finish loading.')
   }
 
