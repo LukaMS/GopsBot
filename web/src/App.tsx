@@ -3,7 +3,7 @@ import { BotClient } from './bot/client'
 import type { ModelEntry, ModelManifest } from './bot/types'
 import { PlayingCard } from './components/PlayingCard'
 import { Tutorial } from './components/Tutorial'
-import { applyBidPair, createSeed, rankLabel, startMatch, type Difficulty, type MatchState, type Rank } from './game/engine'
+import { applyBidPair, createSeed, rankLabel, startMatch, type Difficulty, type MatchState, type Rank, type RoundResult } from './game/engine'
 import { encodeBotObservation, OBSERVATION_SIZE, OBSERVATION_VERSION } from './game/observation'
 import { clearPlayerData, loadPlayerData, markTutorialSeen, recordMatch, savePreference, type PlayerData } from './game/storage'
 
@@ -45,9 +45,10 @@ export function App() {
   const [loadState, setLoadState] = useState<LoadState>('idle')
   const [error, setError] = useState<string | null>(null)
   const [thinking, setThinking] = useState(false)
-  const [revealing, setRevealing] = useState(false)
+  const [roundReveal, setRoundReveal] = useState<RoundResult | null>(null)
   const [lastInferenceMs, setLastInferenceMs] = useState<number | null>(null)
   const botRef = useRef<BotClient | null>(null)
+  const revealing = roundReveal !== null
 
   useEffect(() => () => botRef.current?.terminate(), [])
 
@@ -87,6 +88,7 @@ export function App() {
       setModelEntry(entry)
       setMatch(startMatch(createSeed()))
       setSelectedBid(null)
+      setRoundReveal(null)
       setLastInferenceMs(null)
       setLoadState('ready')
       setScreen('game')
@@ -101,18 +103,24 @@ export function App() {
   async function playSelectedBid() {
     if (!match || selectedBid === null || thinking || revealing || !botRef.current) return
     const stateBeforeBid = match
+    const humanBid = selectedBid
     setThinking(true)
     setError(null)
     try {
-      const choice = await botRef.current.choose(encodeBotObservation(stateBeforeBid), stateBeforeBid.remainingBotBids)
+      const [choice] = await Promise.all([
+        botRef.current.choose(encodeBotObservation(stateBeforeBid), stateBeforeBid.remainingBotBids),
+        delay(300),
+      ])
       setLastInferenceMs(choice.latencyMs)
-      const next = applyBidPair(stateBeforeBid, selectedBid, choice.rank)
-      setMatch(next)
+      const next = applyBidPair(stateBeforeBid, humanBid, choice.rank)
+      const result = next.history.at(-1)
+      if (!result) throw new Error('The round result could not be displayed.')
+      setRoundReveal(result)
       setSelectedBid(null)
       setThinking(false)
-      setRevealing(true)
-      await delay(900)
-      setRevealing(false)
+      await delay(1900)
+      setRoundReveal(null)
+      setMatch(next)
       if (next.phase === 'complete') {
         const data = recordMatch(next, difficulty, modelEntry?.modelVersion ?? 'unknown')
         setPlayerData(data)
@@ -120,7 +128,7 @@ export function App() {
       }
     } catch (caught) {
       setThinking(false)
-      setRevealing(false)
+      setRoundReveal(null)
       setError(caught instanceof Error ? caught.message : 'The bot could not choose a bid.')
     }
   }
@@ -134,6 +142,7 @@ export function App() {
     setScreen('home')
     setMatch(null)
     setSelectedBid(null)
+    setRoundReveal(null)
     setError(null)
     setLoadState('idle')
   }
@@ -146,8 +155,12 @@ export function App() {
   }
 
   if (screen === 'game' && match) {
-    const latest = match.history.at(-1)
-    const displayPrize = match.currentPrize ?? latest?.prize ?? 1
+    const displayPrize = match.currentPrize ?? roundReveal?.prize ?? 1
+    const displayedHumanBids = roundReveal ? match.remainingHumanBids.filter((rank) => rank !== roundReveal.humanBid) : match.remainingHumanBids
+    const displayedBotCount = Math.max(0, match.remainingBotBids.length - (roundReveal ? 1 : 0))
+    const displayedHumanScore = roundReveal?.humanScore ?? match.humanScore
+    const displayedBotScore = roundReveal?.botScore ?? match.botScore
+    const displayedCarriedPot = roundReveal?.carriedAfter ?? match.carriedPot
     return (
       <main className="game-shell" data-last-inference-ms={lastInferenceMs?.toFixed(3)}>
         <header className="game-topbar">
@@ -160,9 +173,9 @@ export function App() {
         </header>
 
         <section className="score-ribbon" aria-label="Score">
-          <div><span>You</span><strong>{match.humanScore}</strong></div>
-          <p>{match.carriedPot > 0 ? `${match.carriedPot} points carried` : 'The table is clear'}</p>
-          <div className="bot-score"><strong>{match.botScore}</strong><span>Bot</span></div>
+          <div><span>You</span><strong>{displayedHumanScore}</strong></div>
+          <p>{displayedCarriedPot > 0 ? `${displayedCarriedPot} points carried` : 'The table is clear'}</p>
+          <div className="bot-score"><strong>{displayedBotScore}</strong><span>Bot</span></div>
         </section>
 
         <div className="game-layout">
@@ -184,29 +197,49 @@ export function App() {
             )}
           </aside>
 
-          <section className="table" aria-label="Game table">
+          <section className={`table ${revealing ? 'is-revealing' : ''}`} aria-label="Game table">
             <div className="bot-zone">
               <div className="player-label"><span className="status-dot" />SELF-PLAY BOT</div>
-              <div className="bot-hand" aria-label={`${match.remainingBotBids.length} cards in the bot hand`}>
-                {Array.from({ length: Math.min(7, match.remainingBotBids.length) }, (_, index) => (
+              <div className="bot-hand" aria-label={`${displayedBotCount} cards in the bot hand`}>
+                {Array.from({ length: Math.min(7, displayedBotCount) }, (_, index) => (
                   <div className="card-back mini" key={index} style={{ '--card-index': index } as React.CSSProperties}><span>G</span></div>
                 ))}
-                <span className="card-count">{match.remainingBotBids.length} cards</span>
+                <span className="card-count">{displayedBotCount} cards</span>
               </div>
             </div>
 
-            <div className="prize-zone">
+            <div className={`prize-zone ${revealing ? 'revealing' : ''}`}>
               <div className="prize-deck" aria-hidden="true"><span>{match.remainingPrizes.length}</span></div>
-              <div className={`prize-card-wrap ${revealing ? 'reveal' : ''}`}>
-                <p className="eyebrow">{match.carriedPot ? `Pot worth ${match.carriedPot + displayPrize}` : 'Current prize'}</p>
-                <PlayingCard rank={displayPrize as Rank} suit="diamond" />
-                {match.carriedPot > 0 && <span className="carry-badge">+{match.carriedPot} carried</span>}
+              <div className="showdown-stage">
+                {roundReveal && (
+                  <div className="showdown-bid human-bid">
+                    <span>Your bid</span>
+                    <PlayingCard rank={roundReveal.humanBid} suit="spade" />
+                  </div>
+                )}
+                <div className={`prize-card-wrap ${revealing ? 'contested' : ''}`}>
+                  <p className="eyebrow">{match.carriedPot ? `Pot worth ${match.carriedPot + displayPrize}` : 'Current prize'}</p>
+                  <PlayingCard rank={displayPrize as Rank} suit="diamond" />
+                  {match.carriedPot > 0 && <span className="carry-badge">+{match.carriedPot} carried</span>}
+                </div>
+                {roundReveal && (
+                  <div className="showdown-bid bot-bid">
+                    <span>Bot's bid</span>
+                    <div className="bot-card-flip">
+                      <div className="bot-card-inner">
+                        <div className="bot-card-face bot-card-back" aria-hidden="true"><div className="card-back"><span>G</span></div></div>
+                        <div className="bot-card-face bot-card-front"><PlayingCard rank={roundReveal.botBid} suit="spade" /></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="bid-reveal" aria-live="polite">
                 {thinking && <span className="thinking"><i /><i /><i /> Bot is considering the table</span>}
-                {revealing && latest && (
-                  <span className={`round-call ${latest.winner}`}>
-                    You {rankLabel(latest.humanBid)} · Bot {rankLabel(latest.botBid)} — {latest.winner === 'tie' ? 'Pot carries' : latest.winner === 'human' ? `You take ${latest.awarded}` : `Bot takes ${latest.awarded}`}
+                {roundReveal && (
+                  <span className={`round-outcome ${roundReveal.winner}`} role="status">
+                    <strong>{roundReveal.winner === 'tie' ? 'Tie — pot carries' : roundReveal.winner === 'human' ? 'You win the round' : 'Bot wins the round'}</strong>
+                    <span>{roundReveal.winner === 'tie' ? `${roundReveal.carriedAfter} points move forward` : `${roundReveal.awarded} points awarded`}</span>
                   </span>
                 )}
                 {!thinking && !revealing && <span>Choose one card. Both bids reveal together.</span>}
@@ -219,7 +252,7 @@ export function App() {
                 <span>{selectedBid ? `${rankLabel(selectedBid)} selected` : 'Select a bid'}</span>
               </div>
               <div className="human-hand">
-                {match.remainingHumanBids.map((rank) => (
+                {displayedHumanBids.map((rank) => (
                   <PlayingCard
                     key={rank}
                     rank={rank}
