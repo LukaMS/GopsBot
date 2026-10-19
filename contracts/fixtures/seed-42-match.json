@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "seed": 42,
+  "prizeOrder": [3, 12, 1, 11, 13, 4, 9, 5, 2, 7, 10, 6, 8],
+  "humanBids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+  "botBids": [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+  "expected": {
+    "humanScore": 47,
+    "botScore": 44,
+    "carriedPot": 0,
+    "winner": "human"
+  }
+}
+

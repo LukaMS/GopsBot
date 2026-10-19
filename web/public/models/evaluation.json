@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "seed": 9182,
+  "gamesPerSeatAndBaseline": 10000,
+  "calibrated": true,
+  "requiredEloGap": 75,
+  "candidates": [
+    {
+      "checkpoint": "checkpoint-0005.pt",
+      "update": 5,
+      "arenaElo": -158.56,
+      "baselineWinRate": 0.286433,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.282983,
+        0.290025
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 10092,
+          "losses": 9879,
+          "draws": 29,
+          "scoreRate": 0.505325
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 1337,
+          "losses": 18651,
+          "draws": 12,
+          "scoreRate": 0.06715
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 5726,
+          "losses": 14253,
+          "draws": 21,
+          "scoreRate": 0.286825
+        }
+      ],
+      "exploitabilityProbe": 0.43285
+    },
+    {
+      "checkpoint": "checkpoint-0030.pt",
+      "update": 30,
+      "arenaElo": -49.7,
+      "baselineWinRate": 0.428967,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.424899,
+        0.4331
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 12857,
+          "losses": 7111,
+          "draws": 32,
+          "scoreRate": 0.64365
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 2597,
+          "losses": 17387,
+          "draws": 16,
+          "scoreRate": 0.13025
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 10249,
+          "losses": 9729,
+          "draws": 22,
+          "scoreRate": 0.513
+        }
+      ],
+      "exploitabilityProbe": 0.36975
+    },
+    {
+      "checkpoint": "checkpoint-0040.pt",
+      "update": 40,
+      "arenaElo": 39.46,
+      "baselineWinRate": 0.55655,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.552733,
+        0.560475
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 15060,
+          "losses": 4922,
+          "draws": 18,
+          "scoreRate": 0.75345
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 4091,
+          "losses": 15884,
+          "draws": 25,
+          "scoreRate": 0.205175
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 14206,
+          "losses": 5765,
+          "draws": 29,
+          "scoreRate": 0.711025
+        }
+      ],
+      "exploitabilityProbe": 0.294825
+    },
+    {
+      "checkpoint": "checkpoint-0160.pt",
+      "update": 160,
+      "arenaElo": 179.27,
+      "baselineWinRate": 0.7373,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.733433,
+        0.740792
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 17701,
+          "losses": 2278,
+          "draws": 21,
+          "scoreRate": 0.885575
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 8676,
+          "losses": 11234,
+          "draws": 90,
+          "scoreRate": 0.43605
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 17787,
+          "losses": 2176,
+          "draws": 37,
+          "scoreRate": 0.890275
+        }
+      ],
+      "exploitabilityProbe": 0.06395
+    }
+  ],
+  "tiers": {
+    "beginner": {
+      "checkpoint": "checkpoint-0005.pt",
+      "update": 5,
+      "arenaElo": -158.56,
+      "baselineWinRate": 0.286433,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.282983,
+        0.290025
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 10092,
+          "losses": 9879,
+          "draws": 29,
+          "scoreRate": 0.505325
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 1337,
+          "losses": 18651,
+          "draws": 12,
+          "scoreRate": 0.06715
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 5726,
+          "losses": 14253,
+          "draws": 21,
+          "scoreRate": 0.286825
+        }
+      ],
+      "exploitabilityProbe": 0.43285
+    },
+    "casual": {
+      "checkpoint": "checkpoint-0030.pt",
+      "update": 30,
+      "arenaElo": -49.7,
+      "baselineWinRate": 0.428967,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.424899,
+        0.4331
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 12857,
+          "losses": 7111,
+          "draws": 32,
+          "scoreRate": 0.64365
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 2597,
+          "losses": 17387,
+          "draws": 16,
+          "scoreRate": 0.13025
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 10249,
+          "losses": 9729,
+          "draws": 22,
+          "scoreRate": 0.513
+        }
+      ],
+      "exploitabilityProbe": 0.36975
+    },
+    "skilled": {
+      "checkpoint": "checkpoint-0040.pt",
+      "update": 40,
+      "arenaElo": 39.46,
+      "baselineWinRate": 0.55655,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.552733,
+        0.560475
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 15060,
+          "losses": 4922,
+          "draws": 18,
+          "scoreRate": 0.75345
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 4091,
+          "losses": 15884,
+          "draws": 25,
+          "scoreRate": 0.205175
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 14206,
+          "losses": 5765,
+          "draws": 29,
+          "scoreRate": 0.711025
+        }
+      ],
+      "exploitabilityProbe": 0.294825
+    },
+    "expert": {
+      "checkpoint": "checkpoint-0160.pt",
+      "update": 160,
+      "arenaElo": 179.27,
+      "baselineWinRate": 0.7373,
+      "games": 60000,
+      "scoreRate95PercentCI": [
+        0.733433,
+        0.740792
+      ],
+      "matchups": [
+        {
+          "opponent": "random",
+          "wins": 17701,
+          "losses": 2278,
+          "draws": 21,
+          "scoreRate": 0.885575
+        },
+        {
+          "opponent": "nearest-prize",
+          "wins": 8676,
+          "losses": 11234,
+          "draws": 90,
+          "scoreRate": 0.43605
+        },
+        {
+          "opponent": "pot-aware",
+          "wins": 17787,
+          "losses": 2176,
+          "draws": 37,
+          "scoreRate": 0.890275
+        }
+      ],
+      "exploitabilityProbe": 0.06395
+    }
+  }
+}

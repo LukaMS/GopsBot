@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-19T14:37:52.788828+00:00",
+  "observationSize": 56,
+  "actionSize": 13,
+  "calibrated": true,
+  "models": [
+    {
+      "difficulty": "beginner",
+      "label": "Beginner",
+      "file": "beginner-v1.onnx",
+      "sha256": "317d9fb458c65cc7c1a7c89b79f965f045fc6f0b5d60a739be5614a22bb9327f",
+      "modelVersion": "1.0.0-u5",
+      "trainingRun": "release-v1",
+      "observationVersion": 1,
+      "metrics": {
+        "arenaElo": -158.56,
+        "baselineWinRate": 0.286433,
+        "games": 60000,
+        "onnxMaxDifference": 8.940696716308594e-08
+      }
+    },
+    {
+      "difficulty": "casual",
+      "label": "Casual",
+      "file": "casual-v1.onnx",
+      "sha256": "314253e8c2c823fef5d4df2047493787284a66f85276c4f13ba22f66bcbc54a3",
+      "modelVersion": "1.0.0-u30",
+      "trainingRun": "release-v1",
+      "observationVersion": 1,
+      "metrics": {
+        "arenaElo": -49.7,
+        "baselineWinRate": 0.428967,
+        "games": 60000,
+        "onnxMaxDifference": 1.7881393432617188e-07
+      }
+    },
+    {
+      "difficulty": "skilled",
+      "label": "Skilled",
+      "file": "skilled-v1.onnx",
+      "sha256": "8f1a84acd63eb59cef0c7e6fa1d8beee98729effaf2b8891980421211b7eb434",
+      "modelVersion": "1.0.0-u40",
+      "trainingRun": "release-v1",
+      "observationVersion": 1,
+      "metrics": {
+        "arenaElo": 39.46,
+        "baselineWinRate": 0.55655,
+        "games": 60000,
+        "onnxMaxDifference": 1.7881393432617188e-07
+      }
+    },
+    {
+      "difficulty": "expert",
+      "label": "Expert",
+      "file": "expert-v1.onnx",
+      "sha256": "ff4bde4c49eaa4b8cbfa7a0785ce247f7243f3ee77c658986a0926000cdab321",
+      "modelVersion": "1.0.0-u160",
+      "trainingRun": "release-v1",
+      "observationVersion": 1,
+      "metrics": {
+        "arenaElo": 179.27,
+        "baselineWinRate": 0.7373,
+        "games": 60000,
+        "onnxMaxDifference": 4.76837158203125e-06
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+node_modules/
+web/dist/
+web/coverage/
+web/test-results/
+web/playwright-report/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+training/runs/
+training/checkpoints/
+*.pt
+*.pth
+.DS_Store
+.env
+
